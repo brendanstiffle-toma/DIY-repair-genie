@@ -2,7 +2,7 @@
 
 A mobile-first web app concept that turns "something's wrong with my car" into a confident decision: fix it yourself with the right parts and a trustworthy video, or hand it to a shop with a fair quote in your pocket.
 
-**[Try the clickable mockup →](https://YOUR-USERNAME.github.io/diy-mechanic-genie/)**
+**[Try the clickable mockup →](https://brendanstiffle-toma.github.io/diy-mechanic-genie/)**
 
 > Status: early prototype, mocked data, looking for feedback before building the real thing.
 
@@ -28,7 +28,7 @@ I want feedback on three specific things before I build the actual backend:
 2. **Is the checklist concept useful?** Right now it tracks the diagnosis steps, then expands into a full repair tracker once you choose DIY or shop. Would you actually use that, or is it noise?
 3. **What's the dealbreaker?** Pretend this app existed tomorrow with real data — what's the one thing that would stop you from using it?
 
-Drop an [issue](https://YOUR-USERNAME.github.io/diy-mechanic-genie/issues), comment on the Reddit post, or just tap through and tell me what you think.
+Drop an [issue](https://brendanstiffle-toma.github.io/diy-mechanic-genie/issues), comment on the Reddit post, or just tap through and tell me what you think.
 
 ## The user flow
 
@@ -72,7 +72,7 @@ Full architecture and API choices are written up in [diy-mechanic-genie-design.m
 open index.html
 ```
 
-Or just visit the [live mockup](https://YOUR-USERNAME.github.io/diy-mechanic-genie/) on your phone.
+Or just visit the [live mockup](https://brendanstiffle-toma.github.io/diy-mechanic-genie/) on your phone.
 
 ## Roadmap
 
@@ -85,7 +85,7 @@ Or just visit the [live mockup](https://YOUR-USERNAME.github.io/diy-mechanic-gen
 
 ## Contributing
 
-This is a solo prototype right now. The most useful contribution at this stage is feedback — [open an issue](https://YOUR-USERNAME.github.io/diy-mechanic-genie/issues/new) with what works, what doesn't, what's missing. If you're a mechanic or have strong opinions about a specific step, I especially want to hear from you.
+This is a solo prototype right now. The most useful contribution at this stage is feedback — [open an issue](https://brendanstiffle-toma.github.io/diy-mechanic-genie/issues/new) with what works, what doesn't, what's missing. If you're a mechanic or have strong opinions about a specific step, I especially want to hear from you.
 
 ## License
 
