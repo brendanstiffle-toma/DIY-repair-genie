@@ -6,6 +6,8 @@ A mobile-first web app concept that turns "something's wrong with my car" into a
 
 > Status: early prototype, mocked data, looking for feedback before building the real thing.
 
+> **Who built this:** I'm Brendan at [Toma](https://toma.com). Toma builds AI for the automotive industry — today we work with dealers and enterprise customers. This mockup is an exploration of whether a direct-to-consumer product makes sense in the same space. Posting publicly because honest outside feedback is the cheapest way to find out.
+
 ---
 
 ## What this is
@@ -28,7 +30,7 @@ I want feedback on three specific things before I build the actual backend:
 2. **Is the checklist concept useful?** Right now it tracks the diagnosis steps, then expands into a full repair tracker once you choose DIY or shop. Would you actually use that, or is it noise?
 3. **What's the dealbreaker?** Pretend this app existed tomorrow with real data — what's the one thing that would stop you from using it?
 
-Drop an [issue](https://brendanstiffle-toma.github.io/diy-mechanic-genie/issues), comment on the Reddit post, or just tap through and tell me what you think.
+Drop an [issue](https://github.com/brendanstiffle-toma/diy-mechanic-genie/issues), comment on the Reddit post, or just tap through and tell me what you think.
 
 ## The user flow
 
@@ -85,7 +87,7 @@ Or just visit the [live mockup](https://brendanstiffle-toma.github.io/diy-mechan
 
 ## Contributing
 
-This is a solo prototype right now. The most useful contribution at this stage is feedback — [open an issue](https://brendanstiffle-toma.github.io/diy-mechanic-genie/issues/new) with what works, what doesn't, what's missing. If you're a mechanic or have strong opinions about a specific step, I especially want to hear from you.
+This is a solo prototype right now. The most useful contribution at this stage is feedback — [open an issue](https://github.com/brendanstiffle-toma/diy-mechanic-genie/issues/new) with what works, what doesn't, what's missing. If you're a mechanic or have strong opinions about a specific step, I especially want to hear from you.
 
 ## License
 
