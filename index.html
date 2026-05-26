@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<title>DIY Mechanic Genie — Mockup</title>
+<style>
+  :root {
+    --bg: #0b0d10;
+    --panel: #14181d;
+    --panel-2: #1c2129;
+    --ink: #eef2f6;
+    --ink-dim: #9aa4ae;
+    --ink-dimmer: #6b7480;
+    --accent: #4dd0a8;
+    --accent-2: #3aa886;
+    --warn: #f5a524;
+    --bad: #ef4444;
+    --line: rgba(255,255,255,0.08);
+    --radius: 14px;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior: none;
+  }
+  body {
+    display: flex; justify-content: center;
+    min-height: 100vh;
+  }
+  .phone {
+    width: 100%;
+    max-width: 420px;
+    min-height: 100vh;
+    background: var(--bg);
+    display: flex; flex-direction: column;
+    position: relative;
+    border-left: 1px solid var(--line);
+    border-right: 1px solid var(--line);
+  }
+  /* status bar visual on desktop preview only */
+  @media (min-width: 500px) {
+    body { background: #050608; padding: 24px 0; }
+    .phone { border-radius: 36px; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,.5); min-height: 800px; max-height: 900px; }
+  }
+
+  header.topbar {
+    padding: calc(var(--safe-top) + 12px) 16px 12px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; gap: 10px;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .logo {
+    width: 30px; height: 30px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .brand {
+    font-weight: 700; letter-spacing: -0.01em; font-size: 15px;
+  }
+  .brand small { display:block; color: var(--ink-dim); font-weight: 500; font-size: 11px; }
+  .back-btn {
+    background: transparent; color: var(--ink); border: none; font-size: 18px;
+    padding: 6px 10px; margin-left: auto; cursor: pointer;
+  }
+
+  /* Checklist strip */
+  .checklist-strip {
+    background: var(--panel-2);
+    border-bottom: 1px solid var(--line);
+    padding: 10px 16px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .checklist-strip .row {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; color: var(--ink-dim);
+  }
+  .checklist-strip .row strong {
+    color: var(--ink); font-weight: 600;
+  }
+  .checklist-progress {
+    height: 4px; background: rgba(255,255,255,0.06); border-radius: 4px;
+    margin-top: 8px; overflow: hidden;
+  }
+  .checklist-progress > div {
+    height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    transition: width 0.3s ease;
+  }
+  .chevron { margin-left: auto; color: var(--ink-dimmer); transition: transform .2s; }
+  .checklist-strip.open .chevron { transform: rotate(180deg); }
+  .checklist-body {
+    display: none;
+    background: var(--panel);
+    border-bottom: 1px solid var(--line);
+  }
+  .checklist-strip.open + .checklist-body { display: block; }
+  .checklist-body h4 {
+    margin: 14px 16px 6px; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--ink-dimmer); font-weight: 700;
+  }
+  .checklist-body ul { list-style: none; padding: 0 16px 14px; margin: 0; }
+  .checklist-body li {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 0; border-bottom: 1px solid var(--line);
+    font-size: 14px;
+  }
+  .checklist-body li:last-child { border-bottom: 0; }
+  .checklist-body li .box {
+    width: 22px; height: 22px; border-radius: 6px;
+    border: 1.5px solid var(--ink-dim);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all .15s;
+  }
+  .checklist-body li.done .box {
+    background: var(--accent); border-color: var(--accent);
+    color: #0b0d10; font-weight: 700;
+  }
+  .checklist-body li.done .label { color: var(--ink-dim); text-decoration: line-through; }
+  .checklist-body li .label { flex: 1; }
+  .checklist-body li .auto-tag {
+    font-size: 10px; padding: 2px 6px; background: rgba(77,208,168,0.15);
+    color: var(--accent); border-radius: 4px; letter-spacing: 0.04em; font-weight: 600;
+  }
+
+  main.screen {
+    flex: 1;
+    padding: 18px 16px calc(120px + var(--safe-bottom));
+    overflow-y: auto;
+  }
+  .screen-title { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin: 6px 0 4px; }
+  .screen-sub { color: var(--ink-dim); font-size: 14px; margin-bottom: 18px; line-height: 1.4; }
+
+  .card {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 14px;
+    margin-bottom: 12px;
+  }
+  .card.tappable { cursor: pointer; transition: background .15s; }
+  .card.tappable:active { background: var(--panel-2); }
+  .card h3 { margin: 0 0 4px; font-size: 15px; font-weight: 600; }
+  .card p { margin: 0; color: var(--ink-dim); font-size: 13px; line-height: 1.4; }
+  .card .icon {
+    float: right; width: 32px; height: 32px; border-radius: 8px;
+    background: rgba(77,208,168,0.1); color: var(--accent);
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+  }
+
+  .btn {
+    width: 100%; padding: 15px; border-radius: 12px;
+    background: var(--accent); color: #0b0d10;
+    border: none; font-size: 16px; font-weight: 700;
+    cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .btn.secondary { background: var(--panel); color: var(--ink); border: 1px solid var(--line); }
+  .btn.ghost { background: transparent; color: var(--ink-dim); }
+  .btn:active { transform: scale(0.985); }
+
+  .bottom-cta {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 12px 16px calc(12px + var(--safe-bottom));
+    background: linear-gradient(180deg, transparent, var(--bg) 30%);
+  }
+
+  /* Camera mock */
+  .cam-frame {
+    aspect-ratio: 3/4; background: #000;
+    border-radius: var(--radius); overflow: hidden;
+    position: relative; margin-bottom: 14px;
+    background-image:
+      radial-gradient(circle at 30% 40%, rgba(60,80,100,.6), transparent 40%),
+      radial-gradient(circle at 70% 60%, rgba(40,60,80,.4), transparent 50%),
+      linear-gradient(135deg, #1a2027, #0a0d10);
+  }
+  .cam-overlay {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+  }
+  .vin-guide {
+    width: 80%; max-width: 280px; height: 50px;
+    border: 2px solid var(--accent); border-radius: 6px;
+    background: rgba(77,208,168,0.05);
+    display: flex; align-items: center; justify-content: center;
+    font-family: ui-monospace, "SF Mono", monospace;
+    letter-spacing: 0.15em; font-size: 14px;
+    color: var(--accent); font-weight: 600;
+    box-shadow: 0 0 0 9999px rgba(0,0,0,0.4);
+    animation: scanPulse 2s infinite;
+  }
+  @keyframes scanPulse {
+    0%, 100% { box-shadow: 0 0 0 9999px rgba(0,0,0,0.4), 0 0 0 0 rgba(77,208,168,0.6); }
+    50% { box-shadow: 0 0 0 9999px rgba(0,0,0,0.4), 0 0 0 6px rgba(77,208,168,0); }
+  }
+  .cam-hint {
+    margin-top: 16px; color: white; font-size: 13px;
+    background: rgba(0,0,0,0.5); padding: 6px 12px; border-radius: 20px;
+  }
+
+  /* Form */
+  label { display: block; font-size: 12px; color: var(--ink-dim); margin: 14px 0 6px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+  select, input, textarea {
+    width: 100%; background: var(--panel); color: var(--ink);
+    border: 1px solid var(--line); padding: 12px 14px;
+    border-radius: 10px; font-size: 15px;
+    font-family: inherit;
+    -webkit-appearance: none; appearance: none;
+  }
+  textarea { min-height: 90px; resize: none; }
+
+  /* Pills / chips */
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 20px;
+    background: rgba(255,255,255,0.06); font-size: 11px;
+    color: var(--ink-dim); font-weight: 600; letter-spacing: 0.02em;
+  }
+  .pill.accent { background: rgba(77,208,168,0.12); color: var(--accent); }
+  .pill.warn { background: rgba(245,165,36,0.12); color: var(--warn); }
+
+  /* Diagnosis confidence bars */
+  .confidence-bar {
+    height: 6px; border-radius: 3px;
+    background: rgba(255,255,255,0.08); overflow: hidden;
+    margin-top: 6px;
+  }
+  .confidence-bar > div {
+    height: 100%; background: var(--accent);
+  }
+
+  .row-split {
+    display: flex; gap: 8px; margin-top: 8px;
+  }
+  .row-split > * { flex: 1; }
+  .stat {
+    background: var(--panel-2); border-radius: 10px; padding: 10px;
+    text-align: center; border: 1px solid var(--line);
+  }
+  .stat .lbl { font-size: 10px; color: var(--ink-dimmer); text-transform: uppercase; letter-spacing: 0.06em; }
+  .stat .val { font-size: 16px; font-weight: 700; margin-top: 2px; }
+
+  /* Part listing */
+  .part {
+    display: flex; gap: 12px; align-items: center;
+    padding: 12px 0; border-bottom: 1px solid var(--line);
+  }
+  .part:last-child { border-bottom: 0; }
+  .part .thumb {
+    width: 52px; height: 52px; border-radius: 8px;
+    background: linear-gradient(135deg, #2a323c, #1a2028);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .part .info { flex: 1; min-width: 0; }
+  .part .name { font-size: 14px; font-weight: 600; }
+  .part .meta { font-size: 12px; color: var(--ink-dim); margin-top: 2px; }
+  .part .price { font-size: 15px; font-weight: 700; color: var(--accent); }
+  .part .vendor { font-size: 11px; color: var(--ink-dim); }
+
+  /* Tool checklist */
+  .tool {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 0; border-bottom: 1px solid var(--line);
+  }
+  .tool:last-child { border-bottom: 0; }
+  .tool .check {
+    width: 24px; height: 24px; border-radius: 6px;
+    border: 1.5px solid var(--ink-dim);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .tool.have .check { background: var(--accent); border-color: var(--accent); color: #0b0d10; font-weight: 700; }
+  .tool .name { flex: 1; font-size: 14px; }
+  .tool .tag { font-size: 11px; color: var(--ink-dim); }
+  .tool.have .name { color: var(--ink-dim); }
+
+  /* Video list */
+  .video {
+    display: flex; gap: 10px;
+    padding: 10px 0; border-bottom: 1px solid var(--line);
+    cursor: pointer;
+  }
+  .video:last-child { border-bottom: 0; }
+  .video .thumb {
+    width: 100px; height: 56px; border-radius: 6px;
+    background: linear-gradient(135deg, #c0392b, #7d2218);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 22px; flex-shrink: 0; position: relative;
+  }
+  .video .thumb::after {
+    content: "12:34"; position: absolute; bottom: 4px; right: 4px;
+    font-size: 9px; background: rgba(0,0,0,0.7); padding: 1px 4px; border-radius: 2px;
+  }
+  .video .info { flex: 1; min-width: 0; }
+  .video .title { font-size: 13px; font-weight: 600; line-height: 1.3; margin-bottom: 4px; }
+  .video .channel { font-size: 11px; color: var(--ink-dim); }
+  .video .badge {
+    display: inline-block; font-size: 10px; padding: 1px 5px;
+    background: rgba(77,208,168,0.15); color: var(--accent);
+    border-radius: 3px; margin-right: 4px; font-weight: 600;
+  }
+
+  /* DIY vs shop */
+  .compare {
+    display: flex; gap: 10px; margin-bottom: 14px;
+  }
+  .compare .col {
+    flex: 1; background: var(--panel); border: 1px solid var(--line);
+    border-radius: 12px; padding: 14px;
+  }
+  .compare .col.recommended { border-color: var(--accent); position: relative; }
+  .compare .col.recommended::before {
+    content: "RECOMMENDED"; position: absolute; top: -8px; left: 50%;
+    transform: translateX(-50%); font-size: 9px; font-weight: 700;
+    background: var(--accent); color: #0b0d10; padding: 2px 8px;
+    border-radius: 4px; letter-spacing: 0.08em;
+  }
+  .compare h4 { margin: 0 0 8px; font-size: 14px; font-weight: 700; }
+  .compare .big-num { font-size: 24px; font-weight: 800; margin: 6px 0 4px; }
+  .compare .small { font-size: 11px; color: var(--ink-dim); }
+
+  /* Shop list */
+  .shop {
+    padding: 12px 0; border-bottom: 1px solid var(--line);
+    cursor: pointer;
+  }
+  .shop:last-child { border-bottom: 0; }
+  .shop .head { display: flex; justify-content: space-between; align-items: center; }
+  .shop .name { font-size: 14px; font-weight: 700; }
+  .shop .dist { font-size: 12px; color: var(--ink-dim); }
+  .shop .meta { font-size: 12px; color: var(--ink-dim); margin-top: 4px; }
+  .shop .specialty { font-size: 11px; color: var(--accent); margin-top: 4px; font-weight: 600; }
+  .shop .actions { display: flex; gap: 8px; margin-top: 10px; }
+  .shop .actions button {
+    flex: 1; padding: 8px; font-size: 12px; border-radius: 8px;
+    border: 1px solid var(--line); background: var(--panel-2); color: var(--ink);
+    font-weight: 600; cursor: pointer;
+  }
+  .stars { color: var(--warn); font-size: 12px; }
+
+  .followup-q {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 14px; margin-bottom: 10px;
+  }
+  .followup-q .q { font-size: 14px; font-weight: 600; margin-bottom: 10px; }
+  .followup-q .choices { display: flex; flex-direction: column; gap: 6px; }
+  .followup-q .choices button {
+    text-align: left; padding: 10px 12px; border-radius: 8px;
+    border: 1px solid var(--line); background: var(--panel-2); color: var(--ink);
+    font-size: 13px; cursor: pointer;
+  }
+  .followup-q .choices button.selected {
+    border-color: var(--accent); background: rgba(77,208,168,0.08); color: var(--accent);
+  }
+
+  .photo-pick {
+    aspect-ratio: 4/3; border: 2px dashed var(--line); border-radius: var(--radius);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: var(--ink-dim); margin-bottom: 12px; font-size: 13px; gap: 6px;
+    cursor: pointer; background: var(--panel);
+  }
+  .photo-pick .ic { font-size: 32px; }
+
+  .progress-dots {
+    display: flex; gap: 6px; justify-content: center; padding: 8px 0;
+  }
+  .progress-dots span {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+  }
+  .progress-dots span.active { background: var(--accent); }
+
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: var(--panel-2); border: 1px solid var(--line);
+    color: var(--ink); padding: 10px 16px; border-radius: 20px;
+    font-size: 13px; opacity: 0; pointer-events: none;
+    transition: opacity .2s;
+    z-index: 50;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="phone" id="phone">
+  <!-- header injected -->
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// --------- App state ---------
+const state = {
+  screen: 'welcome',
+  vehicle: { year: '2014', make: 'Subaru', model: 'Outback', engine: '2.5L H4', trim: '2.5i Premium' },
+  symptoms: '',
+  diagnosis: null,
+  path: null,  // 'diy' | 'shop' | null
+  followupAnswers: {},
+  checklist: {
+    'vehicle-id': false,
+    'problem-desc': false,
+    'diagnosis-confirmed': false,
+  },
+  toolsOwned: { '17mm-socket': true, 'breaker-bar': false, 'torque-wrench': false, 'jack-stands': true, 'cv-boot-clamp': false },
+};
+
+// Restore from localStorage
+try {
+  const saved = JSON.parse(localStorage.getItem('genie-state') || '{}');
+  Object.assign(state, saved);
+} catch (e) {}
+
+function save() {
+  try { localStorage.setItem('genie-state', JSON.stringify(state)); } catch (e) {}
+}
+
+// Diagnoses (mocked - what Claude would return)
+const mockDiagnosis = {
+  top: {
+    cause: 'Torn outer CV boot (driver-side axle)',
+    confidence: 0.78,
+    reasoning: 'Clicking on left turns is classic CV joint wear. The photo shows a split rubber boot with grease slung onto adjacent components — grease has been escaping, which accelerates joint wear.',
+    parts: [
+      { name: 'Outer CV Boot Kit (DSS)', oem: '28323AJ02A', price: 18.99, vendor: 'eBay', shipping: '$4.95', rating: 4.6 },
+      { name: 'Outer CV Boot Kit (OEM Subaru)', oem: '28323AJ02A', price: 42.50, vendor: 'Amazon', shipping: 'Prime', rating: 4.8 },
+      { name: 'Complete Axle Assembly (GSP)', oem: 'NCV57005', price: 89.00, vendor: 'eBay', shipping: 'Free', rating: 4.4 }
+    ],
+    difficulty: 3,
+    diyMinutes: 150,
+    shopLow: 380,
+    shopHigh: 520,
+    diyTotal: 65
+  },
+  others: [
+    { cause: 'Worn sway bar end link', confidence: 0.14 },
+    { cause: 'Loose heat shield', confidence: 0.06 },
+    { cause: 'Strut mount bearing', confidence: 0.02 }
+  ]
+};
+
+const followups = [
+  { q: 'When does the clicking happen?', key: 'when', choices: ['Only when turning', 'Also going straight', 'Mostly when accelerating'] },
+  { q: 'How long has this been happening?', key: 'duration', choices: ['A few days', 'A few weeks', 'A month or more'] },
+  { q: 'Any visible grease around the wheels?', key: 'grease', choices: ['Yes, on driver side', 'Yes, both sides', 'No / unsure'] }
+];
+
+const videos = [
+  { title: '2014 Subaru Outback Outer CV Boot Replacement (full job)', channel: 'TheCarCareNut', badge: 'BEST MATCH', views: '124K' },
+  { title: 'Subaru Axle Boot DIY — what they don\'t tell you', channel: 'EricTheCarGuy', badge: 'GOTCHAS', views: '78K' },
+  { title: 'How to replace a CV axle boot without removing the axle', channel: 'ChrisFix', views: '2.1M' }
+];
+
+const redditThreads = [
+  { sub: 'r/Subaru_Outback', title: 'Just replaced my outer CV boot at 130k — here\'s what I wish I knew', upvotes: 287 },
+  { sub: 'r/MechanicAdvice', title: 'Outer boot torn but joint quiet — boot kit or full axle?', upvotes: 154 }
+];
+
+const shops = [
+  { name: 'All Subaru Specialists', dist: '1.2 mi', rating: 4.8, reviews: 312, price: 425, specialty: 'Subaru only — 18 yrs in business' },
+  { name: "Mike's Independent Auto", dist: '2.4 mi', rating: 4.6, reviews: 198, price: 395, specialty: 'Imports specialist' },
+  { name: 'Midas — 4th Ave', dist: '0.8 mi', rating: 4.1, reviews: 423, price: 510, specialty: 'Chain — fast turnaround' }
+];
+
+// --------- Render ---------
+const $ = (id) => document.getElementById(id);
+
+function checklistItems() {
+  // Phase A always shown
+  const items = [
+    { key: 'vehicle-id', label: 'Vehicle identified', auto: true },
+    { key: 'problem-desc', label: 'Problem described', auto: true },
+    { key: 'diagnosis-confirmed', label: 'Diagnosis confirmed', auto: false },
+  ];
+  if (state.path === 'diy') {
+    items.push(
+      { key: 'parts-ordered', label: 'Parts ordered', auto: true },
+      { key: 'tools-gathered', label: 'Tools gathered (rented / borrowed / bought)', auto: false },
+      { key: 'parts-received', label: 'Parts received', auto: false },
+      { key: 'workspace-prepared', label: 'Workspace prepared', auto: false },
+      { key: 'repair-started', label: 'Repair started', auto: false },
+      { key: 'repair-complete', label: 'Repair complete', auto: false },
+      { key: 'test-drive', label: 'Test drive completed', auto: false },
+      { key: 'feedback-logged', label: 'Feedback logged', auto: false },
+    );
+  } else if (state.path === 'shop') {
+    items.push(
+      { key: 'quote-requested', label: 'Quote requested from shop', auto: true },
+      { key: 'appointment', label: 'Appointment scheduled', auto: false },
+      { key: 'dropped-off', label: 'Vehicle dropped off', auto: false },
+      { key: 'service-complete', label: 'Service complete', auto: false },
+      { key: 'picked-up', label: 'Vehicle picked up', auto: false },
+      { key: 'test-drive', label: 'Test drive completed', auto: false },
+      { key: 'feedback-logged', label: 'Feedback logged', auto: false },
+    );
+  }
+  return items;
+}
+
+function renderChecklistStrip() {
+  const items = checklistItems();
+  const done = items.filter(i => state.checklist[i.key]).length;
+  const total = items.length;
+  const pct = total ? (done / total) * 100 : 0;
+
+  let nextItem = items.find(i => !state.checklist[i.key]);
+  const nextLabel = nextItem ? `Next: ${nextItem.label}` : 'All steps complete';
+
+  const phaseLabel = state.path === 'diy' ? 'DIY job' : state.path === 'shop' ? 'Shop visit' : 'Diagnosis';
+
+  return `
+    <div class="checklist-strip" id="cl-strip" onclick="toggleChecklist()">
+      <div class="row">
+        <strong>${phaseLabel}</strong>
+        <span>${done} / ${total}</span>
+        <span style="color: var(--ink-dimmer); margin-left: 4px;">· ${nextLabel}</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="checklist-progress"><div style="width: ${pct}%"></div></div>
+    </div>
+    <div class="checklist-body">
+      <h4>${state.path ? (state.path === 'diy' ? 'Diagnosis + DIY repair' : 'Diagnosis + Shop visit') : 'Diagnosis steps'}</h4>
+      <ul>
+        ${items.map(i => `
+          <li class="${state.checklist[i.key] ? 'done' : ''}" onclick="event.stopPropagation(); toggleItem('${i.key}')">
+            <div class="box">${state.checklist[i.key] ? '✓' : ''}</div>
+            <div class="label">${i.label}</div>
+            ${i.auto ? '<span class="auto-tag">AUTO</span>' : ''}
+          </li>
+        `).join('')}
+      </ul>
+    </div>
+  `;
+}
+
+function renderTopbar(backTo) {
+  return `
+    <header class="topbar">
+      <div class="logo">🔧</div>
+      <div class="brand">DIY Mechanic Genie<small>${state.vehicle.year ? state.vehicle.year + ' ' + state.vehicle.make + ' ' + state.vehicle.model : 'New diagnosis'}</small></div>
+      ${backTo ? `<button class="back-btn" onclick="go('${backTo}')">← Back</button>` : ''}
+    </header>
+  `;
+}
+
+function go(screen) {
+  state.screen = screen;
+  // Auto-check on advance
+  if (screen === 'vehicle-confirm') state.checklist['vehicle-id'] = true;
+  if (screen === 'diagnosis') { state.checklist['problem-desc'] = true; }
+  if (screen === 'job-overview') state.checklist['diagnosis-confirmed'] = true;
+  save();
+  render();
+  window.scrollTo({ top: 0, behavior: 'instant' });
+}
+
+function toggleChecklist() {
+  $('cl-strip').classList.toggle('open');
+}
+
+function toggleItem(key) {
+  state.checklist[key] = !state.checklist[key];
+  save();
+  render();
+  // re-open strip after re-render
+  setTimeout(() => $('cl-strip').classList.add('open'), 0);
+}
+
+function choosePath(p) {
+  state.path = p;
+  state.checklist['diagnosis-confirmed'] = true;
+  if (p === 'diy') {
+    state.checklist['parts-ordered'] = false;
+  } else {
+    state.checklist['quote-requested'] = false;
+  }
+  save();
+  go(p === 'diy' ? 'diy-tracker' : 'shop-tracker');
+}
+
+function setAnswer(qKey, choice) {
+  state.followupAnswers[qKey] = choice;
+  save();
+  render();
+}
+
+function buyPart(idx) {
+  state.checklist['parts-ordered'] = true;
+  save();
+  showToast('Marked "Parts ordered" ✓');
+  render();
+}
+
+function toggleTool(tool) {
+  state.toolsOwned[tool] = !state.toolsOwned[tool];
+  save();
+  render();
+}
+
+function showToast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+function reset() {
+  if (!confirm('Start over? This clears your current diagnosis.')) return;
+  localStorage.removeItem('genie-state');
+  location.reload();
+}
+
+// --------- Screens ---------
+const screens = {
+  welcome: () => `
+    ${renderTopbar()}
+    ${renderChecklistStrip()}
+    <main class="screen">
+      <div style="text-align: center; padding: 30px 0 20px;">
+        <div style="font-size: 64px;">🔧</div>
+        <h1 class="screen-title" style="margin-top: 18px;">Your DIY Mechanic Genie</h1>
+        <p class="screen-sub">Snap a photo, describe the problem.<br>Get the right diagnosis, parts, and a real DIY-vs-shop decision in 60 seconds.</p>
+      </div>
+      <div class="card">
+        <h3>How it works</h3>
+        <p>1️⃣ Scan your VIN or pick your car<br>2️⃣ Take a photo or describe the issue<br>3️⃣ Get parts, tools, videos, and shop quotes<br>4️⃣ Track the whole job to completion</p>
+      </div>
+      <div class="bottom-cta">
+        <button class="btn" onclick="go('vehicle-method')">Start a diagnosis</button>
+        ${state.diagnosis || Object.values(state.checklist).some(v => v) ? '<button class="btn ghost" style="margin-top: 6px;" onclick="reset()">Start over</button>' : ''}
+      </div>
+    </main>
+  `,
+
+  'vehicle-method': () => `
+    ${renderTopbar('welcome')}
+    ${renderChecklistStrip()}
+    <main class="screen">
+      <h1 class="screen-title">Identify your vehicle</h1>
+      <p class="screen-sub">VIN is the most accurate — it pins down your exact engine and trim. Or pick year/make/model if you'd rather.</p>
+
+      <div class="card tappable" onclick="go('vin-scan')">
+        <div class="icon">📷</div>
+        <h3>Scan VIN with camera</h3>
+        <p>Point at the windshield base or driver's door jamb. 17 characters, alphanumeric.</p>
+      </div>
+
+      <div class="card tappable" onclick="go('vin-type')">
+        <div class="icon">⌨️</div>
+        <h3>Type the VIN</h3>
+        <p>If you've got it written down already.</p>
+      </div>
+
+      <div class="card tappable" onclick="go('vehicle-confirm')">
+        <div class="icon">🚗</div>
+        <h3>Pick year / make / model</h3>
+        <p>Less precise — we'll guess engine and trim.</p>
+      </div>
+    </main>
+  `,
+
+  'vin-scan': () => `
+    ${renderTopbar('vehicle-method')}
+    ${renderChecklistStrip()}
+    <main class="screen">
+      <h1 class="screen-title">Scan your VIN</h1>
+      <p class="screen-sub">Hold the camera steady over the VIN plate. Auto-captures when 17 valid characters are detected.</p>
+
+      <div class="cam-frame">
+        <div class="cam-overlay">
+          <div class="vin-guide" id="vin-guide">JF1GPAR60E8H12345</div>
+          <div class="cam-hint">Detected — tap to confirm</div>
+        </div>
+      </div>
+
+      <p style="color: var(--ink-dim); font-size: 12px; text-align: center;">Common VIN locations: windshield base (driver side), door jamb sticker, registration card.</p>
+
+      <div class="bottom-cta">
+        <button class="btn" onclick="go('vehicle-confirm')">Use this VIN</button>
+        <button class="btn ghost" style="margin-top: 6px;" onclick="go('vehicle-method')">Type instead</button>
+      </div>
+    </main>
+  `,
+
+  'vin-type': () => `
+    ${renderTopbar('vehicle-method')}
+    ${renderChecklistStrip()}
+    <main class="screen">
+      <h1 class="screen-title">Type your VIN</h1>
+      <label>VIN (17 characters)</label>
+      <input value="JF1GPAR60E8H12345" maxlength="17" style="font-family: ui-monospace; letter-spacing: 0.1em;" />
+      <p style="color: var(--ink-dim); font-size: 12px; margin-top: 8px;">We'll look up your exact engine and trim via NHTSA's free VIN decoder.</p>
+      <div class="bottom-cta">
+        <button class="btn" onclick="go('vehicle-confirm')">Look up vehicle</button>
+      </div>
+    </main>
+  `,
+
+  'vehicle-confirm': () => `
+    ${renderTopbar('vehicle-method')}
+    ${renderChecklistStrip()}
+    <main class="screen">
+      <h1 class="screen-title">Is this right?</h1>
+      <p class="screen-sub">Decoded from VIN — adjust anything that looks off.</p>
+
+      <label>Year</label>
+      <select><option>2014</option><option>2013</option><option>2015</option></select>
+
+      <label>Make</label>
+      <select><option>Subaru</option></select>
+
+      <label>Model</label>
+      <select><option>Outback</option><option>Legacy</option></select>
+
+      <label>Engine</label>
+      <select><option>2.5L H4 (4-cyl boxer)</option><option>3.6L H6 (6-cyl boxer)</option></select>
+
+      <label>Trim</label>
+      <select><option>2.5i Premium</option><option>2.5i Limited</option><option>2.5i base</option></select>
+
+      <div class="bottom-cta">
+        <button class="btn" onclick="go('problem-capture')">Looks right — describe the problem</button>
+      </div>
+    </main>
+  `,
+
+  'problem-capture': () => `
+    ${renderTopbar('vehicle-confirm')}
+    ${renderChecklistStrip()}
+    <main class="screen">
+      <h1 class="screen-title">What's wrong?</h1>
+      <p class="screen-sub">Add a photo if you can see the problem (broken part, leak, dashboard light). Describe what's happening in your own words.</p>
+
+      <div class="photo-pick" onclick="showToast('Camera would open here')">
+        <div class="ic">📷</div>
+        <div>Tap to take a photo or upload</div>
+        <div style="font-size: 11px; color: var(--ink-dimmer);">Optional but helpful</div>
+      </div>
+
+      <label>What's happening?</label>
+      <textarea placeholder="e.g. clicking noise when I turn left at low speed">Clicking noise when I turn left at low speed. Sounds worse when I'm accelerating out of the turn. Started a few weeks ago, getting louder.</textarea>
+
+      <label style="margin-top: 14px;">Voice describe (optional)</label>
+      <button class="btn secondary" onclick="showToast('Speech-to-text would activate')">🎤 Tap to speak</button>
+
+      <div class="bottom-cta">
+        <button class="btn" onclick="go('followup')">Analyze →</button>
+      </div>
+    </main>
+  `,
+
+  'followup': () => `
+    ${renderTopbar('problem-capture')}
+    ${renderChecklistStrip()}
+    <main class="screen">
+      <h1 class="screen-title">A few quick questions</h1>
+      <p class="screen-sub">These help me narrow down the most likely cause.</p>
+
+      ${followups.map(f => `
+        <div class="followup-q">
+          <div class="q">${f.q}</div>
+          <div class="choices">
+            ${f.choices.map(c => `
+              <button class="${state.followupAnswers[f.key] === c ? 'selected' : ''}" onclick="setAnswer('${f.key}', '${c}')">${c}</button>
+            `).join('')}
+          </div>
+        </div>
+      `).join('')}
+
+      <div class="bottom-cta">
+        <button class="btn" onclick="go('diagnosis')">See diagnosis</button>
+      </div>
+    </main>
+  `,
+
+  'diagnosis': () => {
+    const d = mockDiagnosis;
+    return `
+      ${renderTopbar('followup')}
+      ${renderChecklistStrip()}
+      <main class="screen">
+        <h1 class="screen-title">Most likely cause</h1>
+        <p class="screen-sub">Based on your description, photo, and ${state.vehicle.year} ${state.vehicle.make} ${state.vehicle.model}.</p>
+
+        <div class="card" style="border-color: var(--accent);">
+          <span class="pill accent">${Math.round(d.top.confidence * 100)}% confidence</span>
+          <h3 style="margin-top: 8px; font-size: 17px;">${d.top.cause}</h3>
+          <div class="confidence-bar"><div style="width: ${d.top.confidence * 100}%"></div></div>
+          <p style="margin-top: 10px;">${d.top.reasoning}</p>
+        </div>
+
+        <h4 style="margin: 20px 0 10px; font-size: 12px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.06em;">Other possibilities</h4>
+        ${d.others.map(o => `
+          <div class="card">
+            <span class="pill">${Math.round(o.confidence * 100)}%</span>
+            <h3 style="margin-top: 8px; font-size: 14px;">${o.cause}</h3>
+            <div class="confidence-bar"><div style="width: ${o.confidence * 100}%"></div></div>
+          </div>
+        `).join('')}
+
+        <div class="bottom-cta">
+          <button class="btn" onclick="go('job-overview')">Yes — see the fix</button>
+          <button class="btn ghost" style="margin-top: 6px;" onclick="go('problem-capture')">Not quite — refine</button>
+        </div>
+      </main>
+    `;
+  },
+
+  'job-overview': () => {
+    const d = mockDiagnosis.top;
+    return `
+      ${renderTopbar('diagnosis')}
+      ${renderChecklistStrip()}
+      <main class="screen">
+        <h1 class="screen-title">${d.cause}</h1>
+        <p class="screen-sub">Here's what it'll take.</p>
+
+        <div class="row-split">
+          <div class="stat"><div class="lbl">Difficulty</div><div class="val">${'🔧'.repeat(d.difficulty)}</div></div>
+          <div class="stat"><div class="lbl">DIY time</div><div class="val">${Math.round(d.diyMinutes / 60 * 10) / 10}h</div></div>
+        </div>
+        <div class="row-split" style="margin-top: 8px;">
+          <div class="stat"><div class="lbl">DIY total</div><div class="val" style="color: var(--accent);">$${d.diyTotal}</div></div>
+          <div class="stat"><div class="lbl">Shop range</div><div class="val">$${d.shopLow}–$${d.shopHigh}</div></div>
+        </div>
+
+        <div class="card" style="margin-top: 16px;">
+          <h3>Walk-through</h3>
+          <p>Tap below to see parts, tools, videos, and your DIY-vs-shop decision in order.</p>
+        </div>
+
+        <div class="card tappable" onclick="go('parts')">
+          <div class="icon">🔩</div>
+          <h3>Parts you'll need</h3>
+          <p>3 options · from $19 · live pricing</p>
+        </div>
+        <div class="card tappable" onclick="go('tools')">
+          <div class="icon">🛠️</div>
+          <h3>Tools required</h3>
+          <p>5 tools · 3 you likely have · 1 rentable</p>
+        </div>
+        <div class="card tappable" onclick="go('guide')">
+          <div class="icon">▶️</div>
+          <h3>DIY guide</h3>
+          <p>3 curated videos + 2 Reddit threads</p>
+        </div>
+        <div class="card tappable" onclick="go('compare')">
+          <div class="icon">⚖️</div>
+          <h3>DIY vs Shop</h3>
+          <p>Make the call</p>
+        </div>
+      </main>
+    `;
+  },
+
+  'parts': () => {
+    const d = mockDiagnosis.top;
+    return `
+      ${renderTopbar('job-overview')}
+      ${renderChecklistStrip()}
+      <main class="screen">
+        <h1 class="screen-title">Parts</h1>
+        <p class="screen-sub">Verified to fit your ${state.vehicle.year} ${state.vehicle.make} ${state.vehicle.model}, ${state.vehicle.engine}.</p>
+
+        <div class="card">
+          ${d.parts.map((p, i) => `
+            <div class="part" onclick="buyPart(${i})">
+              <div class="thumb">🔩</div>
+              <div class="info">
+                <div class="name">${p.name}</div>
+                <div class="meta">OEM ${p.oem} · ★ ${p.rating} · ${p.shipping}</div>
+                <div class="vendor">${p.vendor}</div>
+              </div>
+              <div style="text-align: right;">
+                <div class="price">$${p.price.toFixed(2)}</div>
+                <div style="font-size: 11px; color: var(--ink-dimmer); margin-top: 4px;">Tap to buy →</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="card">
+          <h3>💡 Genie tip</h3>
+          <p>For a 130k+ mile axle, replacing the full axle assembly often makes more sense than just the boot — the joint inside is probably already worn. The $89 axle saves you doing this job again in 20k miles.</p>
+        </div>
+
+        <div class="bottom-cta">
+          <button class="btn" onclick="go('tools')">See tools needed →</button>
+        </div>
+      </main>
+    `;
+  },
+
+  'tools': () => {
+    const tools = [
+      { key: '17mm-socket', name: '17mm socket + ratchet', tag: 'Common' },
+      { key: 'breaker-bar', name: '24" breaker bar', tag: 'Rentable at AutoZone' },
+      { key: 'torque-wrench', name: 'Torque wrench (50–150 ft-lb)', tag: 'Critical for axle nut' },
+      { key: 'jack-stands', name: 'Jack stands (pair)', tag: 'Common' },
+      { key: 'cv-boot-clamp', name: 'CV boot clamp pliers', tag: 'Usually included with kit' }
+    ];
+    return `
+      ${renderTopbar('parts')}
+      ${renderChecklistStrip()}
+      <main class="screen">
+        <h1 class="screen-title">Tools</h1>
+        <p class="screen-sub">Check what you already have. We'll flag what you can rent free at AutoZone (loan-a-tool).</p>
+
+        <div class="card">
+          ${tools.map(t => `
+            <div class="tool ${state.toolsOwned[t.key] ? 'have' : ''}" onclick="toggleTool('${t.key}')">
+              <div class="check">${state.toolsOwned[t.key] ? '✓' : ''}</div>
+              <div class="name">${t.name}</div>
+              <div class="tag">${t.tag}</div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="card">
+          <h3>You're missing</h3>
+          <p>Breaker bar (rent free at AutoZone) and torque wrench. A decent torque wrench is $50 at Harbor Freight — worth owning if you plan to DIY more than once.</p>
+        </div>
+
+        <div class="bottom-cta">
+          <button class="btn" onclick="go('guide')">Watch the guide →</button>
+        </div>
+      </main>
+    `;
+  },
+
+  'guide': () => `
+    ${renderTopbar('tools')}
+    ${renderChecklistStrip()}
+    <main class="screen">
+      <h1 class="screen-title">DIY guide</h1>
+      <p class="screen-sub">Curated for your exact YMM and job — not just generic Subaru content.</p>
+
+      <h4 style="margin: 10px 0; font-size: 12px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.06em;">YouTube</h4>
+      <div class="card">
+        ${videos.map(v => `
+          <div class="video" onclick="showToast('YouTube would open')">
+            <div class="thumb">▶</div>
+            <div class="info">
+              ${v.badge ? `<span class="badge">${v.badge}</span>` : ''}
+              <div class="title">${v.title}</div>
+              <div class="channel">${v.channel} · ${v.views} views</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <h4 style="margin: 14px 0 10px; font-size: 12px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.06em;">Reddit threads worth reading first</h4>
+      <div class="card">
+        ${redditThreads.map(r => `
+          <div class="video" style="border-bottom: 1px solid var(--line);" onclick="showToast('Reddit would open')">
+            <div class="thumb" style="background: linear-gradient(135deg, #ff4500, #b73200);">r/</div>
+            <div class="info">
+              <div class="title">${r.title}</div>
+              <div class="channel">${r.sub} · ↑ ${r.upvotes}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="bottom-cta">
+        <button class="btn" onclick="go('compare')">Make the call →</button>
+      </div>
+    </main>
+  `,
+
+  'compare': () => {
+    const d = mockDiagnosis.top;
+    return `
+      ${renderTopbar('guide')}
+      ${renderChecklistStrip()}
+      <main class="screen">
+        <h1 class="screen-title">DIY or shop?</h1>
+        <p class="screen-sub">Honest comparison for your situation.</p>
+
+        <div class="compare">
+          <div class="col recommended">
+            <h4>🔧 DIY</h4>
+            <div class="big-num" style="color: var(--accent);">$${d.diyTotal}</div>
+            <div class="small">${Math.round(d.diyMinutes / 60 * 10) / 10} hours · difficulty ${d.difficulty}/5</div>
+            <div style="margin-top: 10px; font-size: 12px;">
+              ✓ Save $315–$455<br>
+              ✓ Common job, 3 good videos<br>
+              ⚠️ Need to rent breaker bar
+            </div>
+          </div>
+          <div class="col">
+            <h4>🏪 Shop</h4>
+            <div class="big-num">$${d.shopLow}–$${d.shopHigh}</div>
+            <div class="small">Out of car ~1 day</div>
+            <div style="margin-top: 10px; font-size: 12px;">
+              ✓ Done in hours<br>
+              ✓ Warranty<br>
+              ⚠️ 3× the cost
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>💡 Genie says</h3>
+          <p>This is a solid first DIY job. You'll need to rent the breaker bar (free at AutoZone) and the torque wrench is critical — don't skip it. Set aside a Saturday morning.</p>
+        </div>
+
+        <button class="btn" style="margin-bottom: 10px;" onclick="choosePath('diy')">I'll DIY this →</button>
+        <button class="btn secondary" onclick="choosePath('shop')">Get a shop quote →</button>
+      </main>
+    `;
+  },
+
+  'diy-tracker': () => {
+    return `
+      ${renderTopbar('compare')}
+      ${renderChecklistStrip()}
+      <main class="screen">
+        <h1 class="screen-title">Your DIY job</h1>
+        <p class="screen-sub">I've expanded your checklist with the full job. Tap the strip above to see all steps — or check them off here as you go.</p>
+
+        <div class="card">
+          <h3>🎯 What's next</h3>
+          <p style="margin-bottom: 10px;">Order the part. We recommend the GSP complete axle ($89) — see Parts.</p>
+          <button class="btn secondary" onclick="go('parts')">Open parts list</button>
+        </div>
+
+        <div class="card">
+          <h3>📦 When parts arrive</h3>
+          <p>Tap the "Parts received" item in your checklist. We'll send you the prep instructions and the best video to watch before starting.</p>
+        </div>
+
+        <div class="card">
+          <h3>🛠️ Day-of</h3>
+          <p>Open this screen on your phone in the garage. Each step is a checkbox. We'll cue up the right video segment for each stage.</p>
+        </div>
+
+        <div class="card">
+          <h3>✅ When you're done</h3>
+          <p>Test drive (gentle parking-lot laps, then full-lock turns at 5mph) — listen for clicking. If it's gone, log feedback. If it's not, tap "Re-diagnose."</p>
+        </div>
+
+        <div class="bottom-cta">
+          <button class="btn" onclick="toggleChecklist(); $('cl-strip').scrollIntoView()">Open full checklist</button>
+        </div>
+      </main>
+    `;
+  },
+
+  'shop-tracker': () => `
+    ${renderTopbar('compare')}
+    ${renderChecklistStrip()}
+    <main class="screen">
+      <h1 class="screen-title">Shops near you</h1>
+      <p class="screen-sub">Ranked for this specific job + your vehicle. Subaru-specific shops get a boost.</p>
+
+      <div class="card">
+        ${shops.map(s => `
+          <div class="shop" onclick="showToast('Shop details + call would open')">
+            <div class="head">
+              <div>
+                <div class="name">${s.name}</div>
+                <div class="specialty">${s.specialty}</div>
+              </div>
+              <div style="text-align: right;">
+                <div class="dist">${s.dist}</div>
+                <div class="stars">${'★'.repeat(Math.floor(s.rating))} ${s.rating}</div>
+                <div style="font-size: 11px; color: var(--ink-dim);">${s.reviews} reviews</div>
+              </div>
+            </div>
+            <div class="meta">Estimated for this job: <strong style="color: var(--ink);">$${s.price}</strong></div>
+            <div class="actions">
+              <button onclick="event.stopPropagation(); state.checklist['quote-requested'] = true; save(); showToast('Quote request sent ✓'); render();">Request quote</button>
+              <button onclick="event.stopPropagation(); showToast('Phone would dial')">Call</button>
+              <button onclick="event.stopPropagation(); showToast('Maps would open')">Directions</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="card">
+        <h3>🎯 Track your visit</h3>
+        <p>Once you've booked, check off each step in the checklist above as it happens — appointment scheduled, dropped off, picked up, test driven.</p>
+      </div>
+
+      <div class="bottom-cta">
+        <button class="btn" onclick="toggleChecklist(); $('cl-strip').scrollIntoView()">Open full checklist</button>
+      </div>
+    </main>
+  `,
+};
+
+function render() {
+  $('phone').innerHTML = (screens[state.screen] || screens.welcome)();
+}
+
+render();
+</script>
+</body>
+</html>
